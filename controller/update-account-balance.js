@@ -6,6 +6,7 @@ const updateAccountBalance = async(req, res) => {
     const {balance} = req.body;
     const {user_id}  = req.params;
     const {type} = req.query;
+    console.log(req.body);
     if(!balance) return errorResponseTemplate(res, 'balance is a required field', 501);
     if(!user_id) return errorResponseTemplate(res, 'user id is required', 501);
     if(!['CREDIT', 'DEBIT'].includes(type)) return errorResponseTemplate(res, 'type is required', 501);
@@ -13,6 +14,7 @@ const updateAccountBalance = async(req, res) => {
         if(type === 'CREDIT'){
             const data = await sql`update wallet set active_balance = active_balance + ${balance} where user_id=${user_id} returning *`;
             await updateLedger(req, res, user_id, type, 'UPI', balance);
+            console.log(data);
             return successResponseTemplate(res, {message: 'balance credited successfully', data});
         }
         else {
